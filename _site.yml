@@ -22,4 +22,4 @@ output:
     toc: TRUE
     toc_float: TRUE
     css: images/acalat_theme.css
-    keep_md: yes
+    
