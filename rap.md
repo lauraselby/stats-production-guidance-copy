@@ -1,0 +1,1119 @@
+---
+title: "RAP Guidance for Statistics Producers"
+---
+
+
+
+<p class="text-muted">Guidance for how to implement the principles of Reproducible Analytical Pipelines (RAP) into our production processes.</p>
+
+---
+
+# What is RAP
+
+---
+
+Cam ran an introduction to RAP session for DISD in December 2020, the slides can be found on [github](https://github.com/cjrace/introduction-to-rap){target="_blank" rel="noopener noreferrer"}, and the recording is embedded below:
+
+<div align="center">
+<iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/f4fb4ae9-3149-4d7c-8968-ff4c11dc8ac3?autoplay=false&amp;showinfo=false" allowfullscreen style="border:none;"></iframe>
+</div>
+
+[Reproducible Analytical Pipelines](https://dataingovernment.blog.gov.uk/2017/03/27/reproducible-analytical-pipeline/){target="_blank" rel="noopener noreferrer"}, or RAP for short. The full words still hide the true meaning behind buzzwords and jargon though. What it actually means is using automation to our advantage when analysing data, and this is as simple as writing code such as a SQL query that we can click a button to execute and do the job for us. 
+
+The cross-government group of RAP champions have laid out a [minimum level of RAP](https://github.com/best-practice-and-impact/rap_mvp_maturity_guidance/blob/master/Reproducible-Analytical-Pipelines-MVP.md){target="_blank" rel="noopener noreferrer"} to aim for (note that we have our own levels of practice below, which are building blocks to reach this end goal)
+
+We already have 'analytical pipelines' and have done for many years. The aim of RAP, is to automate the parts of these pipelines that can be automated, to increase efficiency and accuracy, while creating a clear audit trail to allow analyses to easily be re-run if needed. This will free us up to focus on the parts of our work where our human input can really add value. RAP is something we can use to reduce the burden on us by getting rid of some of the boring stuff, what's not to like!
+
+Cam ran an introduction to RAP session for DISD in December 2020, the slides can be found on [github](https://github.com/cjrace/introduction-to-rap){target="_blank" rel="noopener noreferrer"}, and the recording is embedded below.
+
+
+<div align="center">
+<iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/f4fb4ae9-3149-4d7c-8968-ff4c11dc8ac3?autoplay=false&amp;showinfo=false" allowfullscreen style="border:none;"></iframe>
+</div>
+
+
+---
+
+## Our scope
+
+---
+
+We want to focus on the parts of the production process that we have ownership and control over – so we are focussing on the process from data sources to publishable data files. This is the part of the process where RAP can currently add the most value - automating the production and quality assurance of our outputs currently takes up huge amount of analytical resource, which could be better spent providing insight and other value adding activity. 
+
+![](images/RAP-Scope-Arrow.png)<!-- -->
+
+In Official Statistics production we are using RAP as a framework for best practice when producing our published data files, as these are the foundations of our publications moving forward. Following this framework will help us to improve and standardise our current production processes and provide a clear 'pipeline' for analysts to follow. This will have the added benefit of setting a clear and defined world of tools and skills required, making learning and development that much clearer and easier. To get started with RAP, we first need to be able to understand what it actually means in practice, and be able to [assess our own work against the principles of RAP](#what-is-expected).
+
+Implementing RAP for us will involve combining the use of SQL, R, and clear, consistent version control to increase efficiency and accuracy in our work. For more information on what these tools are, why we are using them, and resources to help up-skill in those areas, see our [learning resources](l+d.html) page.
+
+The collection of, and routine checking of data as it is coming into the department is also an area that RAP can be applied to. We have kept this out of scope at the moment as the levels of control in this area vary wildly from team to team. If you would like advice and help to automate any particular processes, feel free to [contact us](mailto:statistics.development@education.gov.uk).
+
+---
+
+# Core principles
+
+---
+
+
+**Data sources for a publication are stored in the same database** _- [Preparing data](#preparing-data)_
+
+
+**Underlying data files are produced using code, with no manual steps** _- [Writing code](#writing-code)_
+
+
+**Files and scripts should be appropriately version controlled** _- [Using version control](#version-control)_
+
+ 
+---
+
+# RAP in practice
+
+---
+
+The diagram below highlights what RAP means for us, and the varying levels in which it can be applied. The general expectation is that all teams will have shifted towards the good practice implementation of RAP by the end of their next production cycle. It's worth acknowledging that some teams are already working around great and best practice levels, and that we appreciate every team's situation is unique.
+
+<html>
+<head>
+<title>hex-diagram</title>
+<meta charset="utf-8"/>
+</head>
+<body><div class="mxgraph" style="max-width:100%;" data-mxgraph="{&quot;highlight&quot;:&quot;#0000ff&quot;,&quot;target&quot;:&quot;self&quot;,&quot;lightbox&quot;:false,&quot;nav&quot;:true,&quot;edit&quot;:&quot;_blank&quot;,&quot;xml&quot;:&quot;&lt;mxfile host=\&quot;app.diagrams.net\&quot; modified=\&quot;2020-10-20T15:13:28.533Z\&quot; agent=\&quot;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36\&quot; etag=\&quot;Rv_6eg49Fxt5gBKZxgsw\&quot; version=\&quot;13.8.1\&quot; type=\&quot;google\&quot;&gt;&lt;diagram id=\&quot;_ltWYIdbVKAG_Xyvna0Y\&quot; name=\&quot;Page-1\&quot;&gt;7Zttc5s4EIB/jaefdIPBNs7HxG5yN3PX5prp3ceMDGtQghEVInb660+LxJtNiDOX1pCmk5mi1a5eVg9Cu5iRs9jsrgRNwr+4D9HItvzdyFmObHs8t+0R/ln+o5a4MyMIBPONUiW4Yd/BCC0jzZgPaUNRch5JljSFHo9j8GRDRoXg26bamkfNXhMamB6tSnDj0QgO1P5lvgy1dG67lfx3YEFY9DyenemaDS2UTcNpSH2+rYmcjyNnITiX+mqzW0CEziv8ou0un6gtByYgli0GX1MQn1d36BPbiuhKrUuudANxylZqetoZINBRsY9FlktTKTJPZgJ0BxGL77XlyHZSY0y0KVGGBM3InlExSGl/Dj59o2eftteLu8vbm8e7+z/ItJx8OalUPhYOV25K8DKEHQ14PHIuEhBsA1KNtJReFyLV0MU2ZBJuEuqh2VZhqGSh3OB8x+pyzXZQgIVlwSWVDFtenlmqnOoqB699JpTDdCXQVGJLXLDvPJYU20OdtSoseMRFPl7nMv+H7UjB76GoiXkMeedRVFOeTFx7MUFlNVwWB3/CGtfOrSRfDEso2vAHusr9gv0KUCOtl3EetbK686BeBp/Vi+YGqUlwIoVfcEyHQBnGHkBI2NVEZvGugKtFEI9KxdQW8Jub3bFnurytbp1xcT+E9dumEFJzuwZl0xXR6sIAUxRrjHcyr+TYdpIInghGJZhdJG1BvKZFajqdRM/eJtH/C17Bs9gH33RRbn554R6kF5rCinr3Qa78OZNqJQo6A0F9pkhc1iYQc4EYPXGrvT7OZDrtJc/XgnuQpsrjSGaKj1f0AY5LDQsfhn7b7p2UZoSlBE0IGpBKvZNy921S/vr79g8g0W1wOCnwOjGHFzRlHraeSa7OO4CniL/PW8hboSIp1cg3egRv83feTsbb2LF7Sdy5xoBnwsP9zlcnoBwLLnL4WIwl5Z6oqFXktW2FNIqIboWgFtEtEBYTbU2atp2cnr1zejJOyXg87yWolyoqwgfzBkDWQVURExX+wcEz83/Ll9h2Qr69lfzWC8G7v6UBZXEqb2UIt3u2nUiOrXcmT8fk3qlxqhruA5JL7mUbNS29Mod7on9Y3w3Z+B2yk0G2F2n3hbF/QKQ5PZiQU36MItCppZhGZWBipZ5giWyLvh+0PamsSW6bxyikYdfNpj1wNpu4udb5cuJ2Rb6tIJ+IzYk1a8DZl7D5C3iPXkR18tOguOaYAF1nOndpZa2nRVEaag6VEdEmJDvqiDh23nE8GY723O4ljjdFnJII7md6Cbr2RhOZVNov2Q8n7wCeDEB1WuhljHKdrSLm0QK8BDy2Pi6fk1SWpLB7aXpnPPT3QENGcrJ3fuwLkuc18tJss6GCQetbmpK1Pa1u5Iaewh4ycvuP4b6ELNeQvwMX8MBgqy74ujod4uuRPKcogW5aD4ZoRPhanwu1OqmUu2kceoJ7yDTuxyh9oVH5SJW4UCvzABEO2Ad1wZMKysy8+AuYbEHSazZAjLkGNDclpWE3nkPPazfx/Lh0l854KHi6k37GLB8WEdD4w0FK5xBD1Kvlbo4Azh560nrIwM323qP0BbhnguTiFw8slhCIrpDlyehZ/waiauC46MUeevJ70LDOrV5GLxWsjci6Bd0OQGuh9QGsx4D5tjLfwwJzbk17CeZRmZ6uePuZhM9LgnD7beXChwXo/mO+L2FPVxC+FnyDokymLBfIEI4OydGYGFOiDI8Nzu23lTAfFqX70c/PpvTgY4t2RMxe/0CjDAr+ZpE0PmkAM/uW8aKC6LVUh1TLsZNdVZkjX6xCJcx/bOBN6qJZgP9fce7nxwuqaMDfw+nO1YR0/1pLD7LGrloE2YSPRixAmDy1ZAjwBS6V2u6jc1OxYb6P5gcfISRcHZxzX08vRtMltqUeCmnF8VNovQIlxGk+bO3Z4cO2/I6oTonzckiOJGL2k4hwLepP3BYiBFD5CyPhWM7zSLRtHD8OCfcnIQG+66sd/gCJC0h/ZSJmk7PnibBehwhVrD7ny+tqH0U6H/8D&lt;/diagram&gt;&lt;/mxfile&gt;&quot;}"></div>
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+</body>
+</html>
+
+---
+
+# What is expected
+
+---
+
+<div class="alert alert-dismissible alert-info">
+Teams are expected to review their own processes using the [publication self-assessment tool](https://rsconnect/rsc/publication-self-assessment){target="_blank" rel="noopener noreferrer"} and use the guidance on this site to start making improvements towards meeting the four core principles if they aren't already. If you would like additional help to review your processes, please contact the [Statistics Development Team](mailto:statistics.development@education.gov.uk).
+</div>
+
+Teams will start from different places and implement changes at different rates, and in different ways. We do not expect that every team will follow the same path, or even end at the same point. Don't worry if this seems overwhelming at first, use the guidance here to identify areas for improvement and then tackle them with confidence.
+
+
+---
+
+## How to assess your publication
+
+---
+
+
+The checklist provided in the [publication self-assessment tool](https://rsconnect/rsc/publication-self-assessment){target="_blank" rel="noopener noreferrer"} is designed to make reviewing our processes against our RAP levels easier, giving a straightforward list of questions to check your work against. This will flag potential areas of improvement, and you can then use the links to go to the specific section with more detail and guidance on how to develop your current processes in line with best practice.
+
+
+Some teams will already be looking at best practice, while others will still have work to do to achieve good practice. We know that all teams are starting this from different points, and are here to support all teams from their respective starting positions.
+
+---
+
+## Where we need to focus
+
+---
+
+
+Most teams have already made progress with their production of tidy data files, and the release of the automated screener has now tied up that end point of the pipeline that we are all currently working towards. The standard pipeline for all teams will roughly resemble this:
+
+
+![](images/RAP-Process-Overview.png)<!-- -->
+
+
+The key now is for us to build on the work so far and focus on how we improve the quality and efficiency of our production processes up to that point. To do this, we need to make a concerted effort to standardise how we store and access our data, before then automating what we can to reduce the burden of getting the numbers ready and see the benefits of RAP. The exact meaning of this will vary within teams.
+
+---
+
+## How to get started
+
+---
+
+The Statistics Development Team invites teams to take part in our partnership programme to develop their skills and implement RAP principles to a relevant project. Visit our page on  [getting started with the partnership programme](l+d.html#getting_started) for more details.
+
+---
+
+# Preparing data
+
+---
+
+The first place to start for your teams RAP is to store the raw data you use to create underlying data in a Microsoft SQL Server database. This is similar to a sharepoint area or a shared folder, but it's a dedicated data storage area which allows multiple users to use the same file at once, and for you to run code against the data in one place.
+
+---
+
+## All source data stored in single database 
+
+---
+
+![](images/good.svg)<!-- -->
+
+**What does this mean?** 
+
+When we refer to 'source data', we take this to mean the data you use at the start of the process to create the underlying data files. Any cleaning at the end of a collection will happen before this. 
+
+In order for us to be able to have an end-to-end data pipeline where we can replicate our analysis across the department, we should store all of the raw data needed to create aggregate statistics in a managed Microsoft SQL Server. This includes any lookup tables and all administrative data from collections prior to any manual processing. This allows us to then match and join the data together in an end-to-end process using SQL queries. 
+
+As far as meeting the requirement to have all source data in the same database, databases other than SQL may be acceptable, though we can't support them in the same way.
+
+
+**Why do it?**
+
+The principle is that this source data will remain stable and is the point you can go back to and re-run the processes from if necessary. If for any reason the source data needs to change, your processes will be set up in a way that you can easily re-run them to get updated outputs based on the amended source data with minimal effort.
+
+SQL is a fantastic language for large scale data joining and manipulation; it allows us to replicate end-to-end from raw data to final aggregate statistics output. Having all the data in one place and processing it in one place makes our lives easier, and also helps us when auditing our work and ensuring reproducibility of results. 
+
+
+**How to get started**
+
+<!-- needs example -->
+For a collection of relevant resources to use when learning SQL, see our [learning resources](l+d.html) page, and for guidance on best practice when writing SQL queries, see the [writing code](#writing-code) and [documentation](#documentation) sections on this page, as well as the guides immediately below on how to setup and use a SQL database. 
+
+---
+
+### How to set up a SQL working area
+
+---
+
+More to follow, in the meantime please contact us for advice.
+<!-- needs example -->
+
+---
+
+### Copying data from iStore
+
+---
+
+More to follow, in the meantime please contact us for advice.
+<!-- needs example -->
+
+---
+
+### Importing data to SQL Server
+
+---
+
+There's lots of guidance online of how to import flat files from shared areas into Microsoft SQL server on the internet, including [this guide](https://docs.microsoft.com/en-us/sql/relational-databases/import-export/import-flat-file-wizard?view=sql-server-2017){target="_blank" rel="noopener noreferrer"}.
+
+
+Remember that it is important to import them with consistent, thought-through [naming conventions](#naming-conventions). You will thank yourself later.
+
+---
+
+### How to grant access to your area
+
+---
+
+More to follow, in the meantime please contact us for advice.
+<!-- needs example -->
+
+---
+
+# Writing code
+
+---
+
+The key thing to remember is that **we should be automating everything we can**, and the key to automation is writing code. Using code is as simple as telling your computer what to do. Code is just a list of instructions in a language that your computer can understand.
+
+---
+
+## Processing is done with code
+
+---
+
+![](images/good.svg)<!-- -->
+
+**What does this mean?**
+
+All extraction, and processing of data should be done using code, avoiding any manual steps and moving away from a reliance on Excel, SPSS, and other manual processing. In order to carry out our jobs to the best of our ability it is imperative that we use the [appropriate tools](#appropriate-tools) for the work that we do.
+
+Even steps such as copy and pasting data, or pointing and clicking, are fraught with danger, and these risks should be minimised by using code to document and execute these processes instead. 
+
+**Why do it?**
+
+Using code brings numerous benefits, computers are far quicker, more accurate, and far more reliable than humans in many of the tasks that we do. Writing out these instructions saves us significant amounts of time, particularly when it can be reused in future years, or even next week when one specific number in the source file suddenly changes, and also provides us with editable documentation for our production processes, saving the need for writing down information in extra documents. 
+
+Reliability is a huge benefit of the automation that RAP brings - when one of the lines of data has to be amended a week before publication, it's a life saver to know that you can re-run your process in minutes, and reassuring to know that it will give you the result you want. You can run the same code 100 times, and be confident that it will follow the same steps in the same order every single time.
+
+
+**How to get started**
+
+See our [learning resources](l+d.html) for a wealth of resources on SQL and R to learn the skills required to translate your process into code. 
+
+There are also two sections below with examples of tidying data in SQL and R to get you started.
+
+Ensure that any last-minute fixes to the process are written in the code and not done with manual changes.
+
+---
+
+### Producing tidy underlying data in SQL
+
+---
+
+To get started, here is a [SQL query](https://github.com/TomFranklin/sql-applied-data-tidying/blob/master/data_tidying_l_and_d.sql){target="_blank" rel="noopener noreferrer"} that you can run on your own machine and walks you through the basics of tidying a simple example dataset in SQL.
+
+---
+
+### Tidying and processing data in R
+
+---
+
+<!-- could have better examples -->
+
+[Here is a video](https://vimeo.com/33727555){target="_blank" rel="noopener noreferrer"} of Hadley Wickham talking about how to tidy your data to these principles in R. This covers useful functions and how to complete common data tidying tasks in R. Also worth taking a look at [applied data tidying in R, by RStudio](https://www.youtube.com/watch?v=1ELALQlO-yM){target="_blank" rel="noopener noreferrer"}.
+
+
+Using the `%>%` pipe in R can be incredibly powerful, and make your code much easier to follow, as well as more efficient. If you aren't yet familiar with this, have a look at [this article](https://seananderson.ca/2014/09/13/dplyr-intro/){target="_blank" rel="noopener noreferrer"} that provides a useful beginners guide to piping and the kinds of functions you can use it for. The possibilities stretch about as far as your imagination, and if you have a function or task you want to do within a pipe, googling 'how do I do X in dplyr r' will usually start to point you in the right direction, alternatively you can [contact us](mailto:statistics.development@education.gov.uk), and we'll be happy to help you figure out how to do what you need.
+
+A quick example of how powerful this is is below, where my_data is processed to create new columns, have column names renamed, have the column names tidied using the [janitor](https://garthtarr.github.io/meatR/janitor.html){target="_blank" rel="noopener noreferrer"} package, blank rows and columns removed, data filtered to only include specific geographic levels, and rows rearranged in order, all in a few lines of easy to follow code:
+
+
+
+```r
+processed_regional_data <- my_data %>% 
+  mutate(newPercentageColumn = (numberColumn / totalPopulationColumn) * 100) %>% 
+  rename(newPercentageColumn = percentageRate,
+         numberColumn = number,
+         totalPopulationColumn = population) %>% 
+  clean_names() %>% 
+  remove_empty() %>% 
+  filter(geographic_level == "Regional") %>% 
+  arrange(time_period, region_name)
+```
+
+
+[Helpful new functions](https://towardsdatascience.com/five-tidyverse-tricks-you-may-not-know-about-c5026d5a19da){target="_blank" rel="noopener noreferrer"} in the tidyverse packages can help you to easily transform data from wide to long format (see tip 2 in the linked article for this, as it is often required for tidy data), as well as providing you with tools to allow you quickly and efficiently change the structure of your variables. 
+
+
+For further resources on learning R so that you're able to apply it to your everyday work, have a look at the [learning resources](l+d.html) page.
+
+---
+
+
+## Appropriate tools 
+
+---
+
+![](images/good.svg)<!-- -->
+
+**What does this mean?**
+
+Using the [recommended tools](l+d.html#recommended-tools) on our [learning resources](l+d.html) page (SQL, R and Git), or other suitable alternatives that allow you to meet the [core principles](#core-principles). Ideally any tools used would be [open source](#open-source), Python is a good example of a tool that would also be well suited, though is less widely used in DfE and has a steeper learning curve than R.
+
+
+**Why do it?**
+
+There are many reasons why we have recommended the tools that we have, the recommended tools are:
+
+- already in use at the department and easy for us to access
+- easy and **free** to learn
+- designed for the work that we do
+- used widely across data science in both the public and private sector
+- allow us to meet best practice when applying RAP to our processes
+
+
+**How to get started**
+
+Go to our [learning resources](l+d.html) page to read more about the [recommended tools](l+d.html#recommended-tools) for the jobs we do, as well as looking at the resources available there for how to [build capability](l+d.html#learning-these-tools) in them. Always feel free to contact us if you have any specific questions or would like help in understanding how to use those tools in your work.
+
+---
+
+### Open-source
+
+---
+
+We strongly recommend that teams make use of open-source software where possible, as well as making sure that our own work adheres to the same principles. There will be obvious data protection issues around sensitive data, however the code we use to process it can and should be made widely available. In practical terms this means moving away from the likes of SPSS, SASS and Excel VBA, and utilising the likes of R or Python, version controlled with git, and hosted in a publicly accessible repository.
+
+By following [our guidance](#version-controlled-final-code-script(s)) in saving versions of code in an Azure DevOps, we will then be able to mirror those repositories in a publicly available GitHub area.
+
+Open-source refers to something people can modify and share because its design is publicly accessible. For more information, take a look at this [explanation of open-source](https://opensource.com/resources/what-open-source){target="_blank" rel="noopener noreferrer"}, as well as this guide to [working in an open-source way](https://opensource.com/open-source-way){target="_blank" rel="noopener noreferrer"}.
+
+This is a key part of the [technology code of practice](https://www.gov.uk/government/publications/technology-code-of-practice/technology-code-of-practice#be-open-and-use-open-source){target="_blank" rel="noopener noreferrer"} as an agreed standard for [digital services across government](https://www.gov.uk/guidance/be-open-and-use-open-source){target="_blank" rel="noopener noreferrer"} and is something that we as analysts and members of the Government Statistical Service can reap the benefits from. There are many benefits to adopting open-source software and using the principles in our analytical processes.
+
+
+---
+
+## Using single code scripts
+
+---
+
+Utilising a single script to run processes brings a number of benefits, not least by allowing us to fully automate the process and remove the need to manually trigger different code scripts to get the outputs.
+
+---
+
+### Connecting R to SQL
+
+---
+
+In order to create a single script to run all processes from, it is likely that you will need to use R to run SQL queries. If you are unsure of how to do this, take a look at the materials from Cathy Atkinson's coffee and coding session on [connecting R to SQL using DBI and odbc](https://educationgovuk.sharepoint.com/sites/sarpi/g/WorkplaceDocuments/Forms/AllItems.aspx?FolderCTID=0x012000C61C1076C17C5547A6D6D8C2A27B5D97&View=%7B2B35083D%2D7626%2D48E2%2D9615%2D451544742692%7D&id=%2Fsites%2Fsarpi%2Fg%2FWorkplaceDocuments%2FInducation%20learning%20and%20career%20development%2FCoffee%20and%20Coding%2F180718%5Fcathy%5FR%5FSQL%2FConnecting%5Fto%5FSQL%5FRevA%2Ehtml&parent=%2Fsites%2Fsarpi%2Fg%2FWorkplaceDocuments%2FInducation%20learning%20and%20career%20development%2FCoffee%20and%20Coding%2F180718%5Fcathy%5FR%5FSQL).
+
+Chris Mason-Thom recently did another coffee and coding session on this, which you can watch below: 
+
+<center>
+<iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/c9b7fd97-c854-4a1a-9074-cd80d2ea285e?autoplay=false&amp;showinfo=false" allowfullscreen style="border:none;"></iframe>
+</center>
+
+---
+
+### Single production scripts 
+
+---
+
+![](images/great.svg)<!-- -->
+
+**What does this mean?**
+
+Each file can be created by running a single script. 
+
+This script should take the source data right through to final output at the push of a button, including any manipulation, aggregation, suppression etc.
+
+
+**Why do it?**
+
+Having a single script for this saves time when needing to rerun processes, and provides a clear documentation of how a file is produced.
+
+
+**How to get started**
+
+<!-- needs example -->
+
+More to follow, in the meantime please contact us for advice.
+
+
+---
+
+### Single production scripts with integrated QA 
+
+---
+
+![](images/best.svg)<!-- -->
+
+**What does this mean?**
+
+All quality assurance for a file is also included in the single script that can be used to create a file from source data.
+
+**Why do it?**
+
+This documents the entire process around the data file in a single place. This makes it easier for new analysts to pick up the process, as well as making it quicker and easier to rerun as all reports relating to that file are immediately available if you ever make changes file.
+
+
+**How to get started**
+
+<!-- needs example -->
+
+More to follow, in the meantime please contact us for advice.
+
+---
+
+### Single publication production script 
+
+---
+
+![](images/best.svg)<!-- -->
+
+**What does this mean?**
+
+The ultimate aim is to utilise a single script to run off everything for a publication, the data files, any QA, any summary reports. This script should allow you to run individual outputs by themselves as well, so make sure that each data file can be run in isolation by running single lines of this script.
+
+**Why do it?**
+
+This carries all of the same benefits as having a single master script for a file, but at a wider publication level, effectively documenting the entire publication process in one place. 
+
+**How to get started**
+
+<!-- needs example -->
+
+More to follow, in the meantime please contact us for advice.
+
+---
+
+## Recyclable code for future use 
+
+---
+
+![](images/great.svg)<!-- -->
+
+**What does this mean?**
+
+We'd expect that any recyclable code would take less than 30 minutes of editing before being able to run again in a future iteration of the publication.
+
+
+**Why do it?**
+
+One huge benefit that comes with using code in our processes, is that we can pick them up in future years and reuse with minimum effort, saving us huge amounts of resource. To be able to do this, we need to be conscious of how we write our code, and write it in a way that makes it easy to use in future releases for the publication. 
+ 
+
+**How to get started**
+
+<!-- could have a code example? -->
+
+
+Review your code and consider the following:
+ 
+ - What steps might need re-editing or could become irrelevant?
+ - Can you move all variables that require manual input (e.g. table names, years) to be assigned at the top of the code, so it's easy to edit in one place with each iteration?
+ - Are there any fixed variables that are prone to changing such as geographic boundaries, that you could start preparing for changes now by making it easy to adapt in future?
+
+
+For example, if you refer to the year of publication in your code a lot, consider replacing every instance with a named variable, which you only need to change once at the start of your code. In the example below, the year is set at the top of the code, and is used to define "prev_year", both of which are used further down the code to filter the data based on year.
+
+
+```r
+this_year <- 2020
+prev_year <- this_year - 1
+
+data_filtered <- data %>% 
+  filter(year == this_year)
+
+data_filtered_last_year <- data %>% 
+  filter(year == prev_year)
+```
+
+---
+
+## Standards for coding
+
+---
+
+Code can often be written in many different ways, and in languages such as R, there are often many different functions and routes that you can take to get to the same end result. On top of that, there are even more possibilities for how you can format the code. This section will take you through some widely used standards for coding to help bring standardisation to this area and make it easier to both write and use our code.
+
+---
+
+### Clean final code 
+
+---
+
+![](images/best.svg)<!-- -->
+
+**What does this mean?**
+
+- This code should meet the best practice standards below (for SQL and R). If you are using a different language, such as Python, then contact us for advice on the best standards to use when writing code. 
+
+- There should be no redundant or duplicated code, even if this has been commented out. It should be removed from the files to prevent confusion further down the line.
+
+- The only comments left in the code should be those describing the decisions you have made to help other analysts (and future you) to understand your code. More guidance on [commenting in code](#commenting-in-code) can be found later on this page.
+
+
+**Why do it?**
+
+Clean code is efficient, easy to write, easy to review, and easy to amend for future use. Below are some recommended standards to follow when writing code in SQL and R. 
+
+
+**How to get started**
+
+Watch the coffee and coding session introducing good code practice below:
+
+<center>
+<iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/624e3442-aa66-44e7-bb4f-717a6508b056?autoplay=false&amp;showinfo=false" allowfullscreen style="border:none;"></iframe>
+</center>
+
+Then you should also watch the follow up intermediate session:
+
+<center>
+<iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/92d4ba05-d304-4009-b543-e5f4563f1d30?autoplay=false&amp;showinfo=false" allowfullscreen style="border:none;"></iframe>
+</center>
+
+Clean code should include comments. Comment why you've made decisions, don't comment what you are doing unless it is particularly complex as the code itself describes what you are doing. If in doubt, more comments are better than too few though. Ideally any specific comments or documentation should be alongside the code itself, rather than in separate documents.
+
+---
+
+#### SQL
+
+---
+
+For best practice on writing SQL code, here is a particularly useful [word document](resources/TSQL_Coding_Standards.docx){target="_blank" rel="noopener noreferrer"} produced by our [Data Hub](https://educationgovuk.sharepoint.com/sites/DataHubProgramme2/Shared%20Documents/Content%20Management/Data%20Hub%20one%20pager.pdf){target="_blank" rel="noopener noreferrer"}. This outlines a variety of best practices, ranging from naming conventions, to  to formatting your SQL code so that it is easy to follow visually.
+
+---
+
+#### R
+
+---
+
+When using R, it is generally best practice to use [R projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects){target="_blank" rel="noopener noreferrer"} as directories for your work.
+
+The recommended standard for styling your code in R, is the [tidyverse styling](https://style.tidyverse.org/){target="_blank" rel="noopener noreferrer"}, which is fast becoming the global standard. What is even better is that you can automate this using the [styler](https://styler.r-lib.org/){target="_blank" rel="noopener noreferrer"} package, which will literally style your code for you, and is well worth a look.
+
+There is also plenty of guidance around the internet for [best practice](https://waterdata.usgs.gov/blog/intro-best-practices/){target="_blank" rel="noopener noreferrer"} when writing [efficient R code](https://waterdata.usgs.gov/blog/intro-best-practices/){target="_blank" rel="noopener noreferrer"}.
+
+---
+
+#### HTML
+
+---
+
+If you ever find yourself writing html, or creating it through rmarkdown, you can check your html using [w3's validator](https://validator.w3.org/){target="_blank" rel="noopener noreferrer"}.
+
+---
+
+## Peer reviewing code
+
+---
+
+Peer review is an important element of quality assuring our work. We often do it without realising by bouncing ideas off of one another and by getting others to 'idiot check' our work. When writing code, ensuring that we get our work formally peer reviewed is particularly important for ensuring it's quality and value.
+
+---
+
+### Review of code within team 
+
+---
+
+![](images/great.svg)<!-- -->
+
+**What does this mean?**
+
+- Is someone else in the team able to generate the same outputs?
+
+- Has someone else in the team reviewed the code and given feedback? 
+
+- Have you taken on their feedback and improved the code?
+
+
+**Why do it?**
+
+There are many benefits to this, for example:
+
+- Ensuring consistency across the team
+
+- Minimizing mistakes and their impact
+
+- Ensuring the requirements are met
+
+- Improving code performance
+
+- Sharing of techniques and knowledge
+
+
+**How to get started**
+
+If you can't answer yes, then:
+
+- Get a member of the team to run the code using only your documentation
+
+- Use their feedback to improve documentation/in-line comments in code
+
+---
+
+### Review of code from outside the team
+
+---
+
+![](images/best.svg)<!-- -->
+
+**What does this mean?**
+
+- Has someone from outside of the team and publication area reviewed the code and given feedback? 
+
+- Have you taken on their feedback and improved the code?
+
+**Why do it?**
+
+All of the benefits you get from peer reviewing within your own team, multiple times over. Having someone external offers new perspectives, holds you to account by breaking down assumptions, and offers far greater opportunity for building capability through knowledge sharing.
+
+**How to get started**
+
+While peer reviewing code within the team is often practical, having external analysts peer review your code can bring a fresh perspective. If you're interested in this, please contact us, and we can help you to arrange someone external to your team to review your processes. For this to work smoothly, we recommend that your code is easily accessible for other analysts, such as hosted in an Azure DevOps repo and mirrored to github.
+
+---
+
+## Automated quality assurance
+
+---
+
+Any data files that have been created will need to be quality assured. These checks should be automated where possible, so the computer is doing the hard work - saving us time, and to ensure their reliability.
+
+Some teams are already making great progress with automated QA and realising the benefits of it. The Statistics Development Team are working with these to provide generalised code that teams can use as a starting point for automated QA. The intention is that teams can then run this as a minimum, before then looking to develop more area specific checks to the script and/or continue with current checking processes in tandem. If your team already use, or are working towards using, automated QA then get in touch as we'd be keen to see what you have.
+
+It is assumed that when using R, automated scripts will output .html reports that the team can read through to understand their data and identify any issues, and save as a part of their process documentation.
+
+---
+
+### Basic automated QA
+
+---
+
+![](images/good.svg)<!-- -->
+
+**What does this mean?**
+
+The list of basic automated QA checks, with examples, will appear here shortly.
+
+The Statistics Development Team are developing the QA app to include basic QA outputs, more will follow in this space when this is ready.
+
+**Why do it?**
+
+Quality is one of the three pillars that our [code of practice](https://code.statisticsauthority.gov.uk/the-code/quality/){target="_blank" rel="noopener noreferrer"} is built upon. These basic level checks allow us to have confidence that we are accurately processing the data.
+
+Automating these checks ensures their accuracy and reliability, as well as being dramatically quicker than doing these manually.
+
+**How to get started**
+
+More to follow, in the meantime please contact us for advice.
+
+<!-- there will also be a link to the QA app as well when that is ready -->
+
+---
+
+### Publication specific automated QA
+
+---
+
+![](images/great.svg)<!-- -->
+
+**What does this mean?**
+
+Many teams will have aspects of their data and processes that require Quality Assuring beyond the generalisable basic checks above. Therefore it is expected that teams develop their own automated QA checks to QA specificities of their publications not covered by the basic checks.
+
+**Why do it?**
+
+Quality is one of the three pillars that our [code of practice](https://code.statisticsauthority.gov.uk/the-code/quality/){target="_blank" rel="noopener noreferrer"} is built upon. By building upon the basic checks to develop bespoke QA for our publications, we can increase our confidence in the quality of the processes and outputs that they produce.
+
+**How to get started**
+
+We expect that the basic level of automated QA will cover most needs that publication teams have. However, we also expect that each publication will have it's own quirks that require a more bespoke approach. An example of a publication with it's own bespoke QA checks will appear in this space shortly. For the time being, try to consider what things you'd usually check as flags that something hasn't gone right with your data. What are the unique aspects of your publication's data, and how can you automate checks against them to give you confidence in it's accuracy and reliability?
+
+For those who are interested in starting writing their own QA scripts, it's worth looking at packages in R such as [testthat](https://testthat.r-lib.org/){target="_blank" rel="noopener noreferrer"}, including the [coffee and coding talk](https://educationgovuk.sharepoint.com/sites/sarpi/g/WorkplaceDocuments/Forms/AllItems.aspx?RootFolder=/sites/sarpi/g/WorkplaceDocuments/Inducation%20learning%20and%20career%20development/Coffee%20and%20Coding/190306_peter_autotesting&FolderCTID=0x012000C61C1076C17C5547A6D6D8C2A27B5D97&View=%7b2B35083D-7626-48E2-9615-451544742692%7d){target="_blank" rel="noopener noreferrer"} on it by Peter Curtis, as well as this [guide on testing](http://r-pkgs.had.co.nz/tests.html){target="_blank" rel="noopener noreferrer"} by Hadley Wickham. 
+
+The [janitor](https://garthtarr.github.io/meatR/janitor.html){target="_blank" rel="noopener noreferrer"} package in R also has some particularly useful functions, such as `clean_names()` to automatically clean up your variable names, `remove_empty()` to remove any completely empty rows and columns, and `get_dupes()` which retrieves any duplicate rows in your data - this last one is particularly powerful as you can feed it specific columns and see if there's any duplicate instances of values across those columns.
+
+
+---
+
+## Automating summary statistics
+
+---
+
+As a part of automating QA, we should also be looking to automate the production of summary statistics alongside the tidy underlying data files, this then provides us with instant insight into the stories underneath the numbers.
+
+---
+
+### Automated summaries 
+
+---
+
+![](images/great.svg)<!-- -->
+
+**What does this mean?**
+
+Summary outputs are automated and used to explore the stories of the data. 
+
+The Statistics Development Team are developing the QA app to include basic summary outputs, more will follow in this space when this is ready.
+
+<!-- potential text after the qa app is ready for this
+
+At a basic level we want teams to make use of the QA app to explore their data:
+
+- Have you used the outputs of the automated QA from the screener to understand the data?
+
+- Run automated QA, ensure that all interesting outputs/trends are reflected in the accompanying text
+
+-->
+
+**Why do it?**
+
+Value is one of the three pillars of our [code of practice](https://code.statisticsauthority.gov.uk/the-code/value/){target="_blank" rel="noopener noreferrer"}. Even more specifically it states that __'Statistics and data should be presented clearly, explained meaningfully and provide authoritative insights that serve the public good.'__.
+
+As a result, we should be developing automated summaries to help us to better understand the story of the data and be authorative and rigorous in our telling of it.
+
+**How to get started**
+
+More to follow, in the meantime please contact us for advice.
+<!-- needs example and link to the QA app when ready -->
+
+---
+
+### Publication specific automated summaries 
+
+---
+
+![](images/best.svg)<!-- -->
+
+**What does this mean?**
+
+- Have you gone beyond the outputs of the QA app to consider automating further insights for your publication specifically? E.g. year on year changes for specific measures, comparisons of different characteristics that are of interest to the general public 
+
+- Are you using these outputs to write your commentary?
+
+
+**Why do it?**
+
+All publications are different, and therefore it is important that for each publication, teams go beyond the basics and produce automated summaries specific to their area.
+
+**How to get started**
+
+Consider:
+
+- Integrating extra publication-specific QA into the production process
+ 
+- Consider outputs specific to your publication that would help you to write commentary/draw out interesting analysis
+
+---
+
+# Version control
+
+---
+
+_When you assume you make an 'ass' out of 'u' and 'me'_. Everyone knows this saying, yet few of us heed it's warning. 
+
+The aim should be to leave your work in a state that others (including future you!), can pick it up and immediately find what they need, understanding the processes that have happened previously. Changes to files should be documented, and published versions should be clearly named and stored in their own folder.
+
+As we work with code to process our data more and more, we can begin to utilise version control software to make this process much easier, allowing simultaneous collaboration on files.
+
+---
+
+## Sensible folder and file structure 
+
+---
+
+![](images/good.svg)<!-- -->
+
+**What does this mean?**
+
+As a minimum you should have a folder that includes all of the final versions of documents produced and published, per release, within a folder for the wider publication. Ask yourself if it would be easy for someone who isn't in the team to find specific files, and if not, is there a better way that you could name and structure your folders to make them more intuitive to navigate? 
+
+
+**Why do it?**
+
+How you organize and name your files will have a big impact on your ability to find those files later and to understand what they contain. You should be consistent and descriptive in naming and organizing files so that it is obvious where to find specific data and what the files contain.
+
+
+**How to get started**
+
+Some questions to help you consider whether your folder structure is sensible are:
+
+- Are all documentation, code and outputs for the publication saved in one folder area?
+- Is simple version control clearly applied (e.g. having all final files in a folder named "final"?
+- Are there sub-folders like 'code', 'documentation'', 'outputs' and 'final' to save the relevant working files in? 
+- Are you keeping a version log up to date with any changes made to files in this final folder?
+
+---
+
+### Naming conventions
+
+---
+
+Having a **clear** and **consistent** naming convention for your files is critical. Remember that file names should:
+
+
+**Be machine readable** 
+
+- Avoid spaces.
+- Avoid special characters such as: ~ ! @ # $ % ^ & * ( ) ` ; < > ? , [ ] { } ‘ “.
+- Be as short as practicable; overly long names do not work well with all types of software.
+
+
+**Be human readable** 
+
+- Be easy to understand the contents from the name.
+
+
+**Play well with default ordering**
+
+- Often (though not always!) you should have numbers first, particularly if your file names include dates.
+- Follow the ISO 8601 date standard (YYYYMMDD) to ensure that all of your files stay in chronological order.
+- Use leading zeros to left pad numbers and ensure files sort properly, avoiding 1,10,2,3.
+
+
+If in doubt, take a look at this [presentation](https://speakerdeck.com/jennybc/how-to-name-files){target="_blank" rel="noopener noreferrer"}, or this [naming convention guide by Stanford](https://library.stanford.edu/research/data-management-services/data-best-practices/best-practices-file-naming){target="_blank" rel="noopener noreferrer"}, for examples reinforcing the above.
+
+---
+
+## Documentation
+
+---
+
+![](images/good.svg)<!-- -->
+
+**What does this mean?**
+
+- You should be annotating as you go, ensuring that every process and decision made is written down. Processes are ideally written with code, and decisions in comments. 
+
+- There should be a [README](#writing-a-readme-file) notes file, that clearly details the steps in the process, any dependencies (such as places where access needs to be requested to) and how to carry out the process. 
+
+- Any specialist terms should also be defined if required (e.g. The NFTYPE lookup can be found in xxxxx. "NFTYPE" means school type).
+
+**Why do it?**
+
+When documenting your processes you should leave nothing to chance, we all have wasted time in the past trying to work out what it was that we had done before, and that time increases even more when we are picking up someone else's work. Thorough documentation saves us time, and provides a clear audit trail of what we do. This is key for the 'Reproducible' part of RAP, our processes must be easily reproducible and clear documentation is fundamental to that.
+
+**How to get started**
+
+Take a look at your processes and be critical - could another analyst pick them up without you there to help them? If the answer is no (don't feel ashamed, it will be for many teams) then go through and note down areas that require improvement, so that you can revise them with your team.
+
+Take a look at the sections below for further guidance on improving your documentation.
+
+---
+
+### Commenting in code
+
+---
+
+When writing code, whether that is SQL, R, or something else, make sure you're commenting as you go. Start off every file by outlining the date, author, purpose, and if applicable, the structure of the file, like this: 
+
+```
+----------------------------------------------------------------------------------------------
+-- Script Name:		Section 251 Table A 2019 - s251_tA_2019.sql
+-- Description:		Extraction of data from IStore and production of underlying data file
+-- Author:		    Cam Race
+-- Creation Date:   15/11/2019
+----------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------
+--//  Process
+-- 1. Extract the data for each available year
+-- 2. Match in extra geographical information
+-- 3. Create aggregations - both categorical and geographical totals
+-- 4. Tidy up and output results
+-- 5. Metadata creation
+----------------------------------------------------------------------------------------------
+```
+
+Commented lines should begin with -- (SQL) or # (R), followed by one space and your comment. Remember that **comments should explain the why, not the what.** 
+
+In SQL you can also use `/**` and `**/` to bookend comments over multiple lines. 
+
+In rmarkdown documents you can bookend comments by using `<!--` and `-->`.
+
+Use commented lines of - to break up your files into scannable chunks based upon the structure and subheadings, like the R example below:
+
+
+```
+# Importing the data -----------------------------------------------------------------------------------
+
+```
+
+Doing this can visually break up your code into sections that are easy to navigate around. It will also add that section to your outline, which can be used in RStudio using Ctrl-Shft-O. More details on the possibilities for this can be found in the [RStudio guidance on folding and sectioning code](https://support.rstudio.com/hc/en-us/articles/200484568-Code-Folding-and-Sections){target="_blank" rel="noopener noreferrer"}.
+
+You might be thinking that it would be nice if there was software that could help you with documentation, if so, read on, as Git is an incredibly powerful tool that can help us easily and thoroughly document versions of our files. If you're at the stage where you are developing your own functions and packages in R, then take a look at [roxygen2](https://roxygen2.r-lib.org/){target="_blank" rel="noopener noreferrer"} as well.
+
+---
+
+### Writing a README file
+
+---
+
+**What does this mean?**
+
+A README is a text file (.txt) that introduces and explains a project. It contains information that is required to understand what the project is about and how to use it.
+
+**Why do it?**
+
+It's an easy way to answer questions that your audience will likely have regarding how to install and use your project and also how to collaborate with you.
+
+**How to get started**
+
+More to follow, in the meantime please contact us for advice.
+<!-- needs example -->
+
+---
+
+## Version control with git
+
+---
+
+If you do not already have git downloaded, you can [download the latest version from their website](https://git-scm.com/downloads).
+
+For now, take a look at at the [resources for learning Git](l+d.html#git) on the learning resources page.
+
+---
+
+### Version controlled final code scripts 
+
+---
+
+![](images/great.svg)<!-- -->
+
+**What does this mean?**
+
+This means having the final copies of code and documentation saved in a git-controlled Azure DevOps repo in the official-statistics-production area.
+
+**Why do it?**
+
+Having the final copy of the scripts version controlled gives assurance around how the data was created. It also allows teams to easily record any last minute changes to the code after the initial final version by using the version control to log this. 
+
+**How to get started**
+
+The first step is to get your final versions of code and documentation together in a single folder.
+
+We have a specific area set up for you to host your publication code in on the dfe-gov-uk instance of Azure DevOps, entitled official-statistics-production.
+
+To gain access to this area, please raise a request on service desk by navigating through the pages detailed in the animation below.
+
+
+![](images/servicedesk_request.gif)<!-- -->
+
+Once you have navigated to this page, fill out the form with the following details and send your request off.
+
+![](images/devops_request_details.PNG)<!-- -->
+
+Access is usually granted within a few working days. Alert the [Statistics Development Team](mailto:statistics.development@education.gov.uk) when this is confirmed, and we will set up/give you access to your repository.
+
+---
+
+### Collaboratively develop code using git 
+
+---
+
+![](images/best.svg)<!-- -->
+
+**What does this mean?**
+
+- Has code development taken place in git, collaboratively across the team? 
+
+- Are you making use of pull requests for team members to review and comment on code updates?
+
+- Is there a clear paper trail of changes to code (commits)?
+
+
+**Why do it?**
+
+Using git allows multiple people to simultaneously develop the same code using branches, all with a crystal clear audit trail showing what changes were made when using commits. It makes it easy for team members to review changes via pull requests.
+
+**How to get started**
+
+To get started you should:
+
+---
+
+#### Get your code into a git controlled folder
+
+---
+
+Get code into a git controlled folder in whatever version it is currently in. Use the following steps to do so:
+
+1. Open the folder where your project is saved, right click anywhere in that window, and click "Git Bash Here".
+
+2. This will open a black box. Type in the following and hit enter
+
+
+```r
+git init
+```
+
+2a. If you are setting up git for the first time, or haven't used it in a while, you will need to configure your proxy settings. Type the following, replacing your DfE username where appropriate, and hit enter after each line.
+
+
+```r
+git config --global http.proxy http://USERNAME-HERE@mwg.proxy.ad.hq.dept:9090
+
+git config --global https.proxy  https://USERNAME-HERE@mwg.proxy.ad.hq.dept:9090
+
+git config --global http.sslverify false 
+```
+
+3. After hitting enter, type in the following and hit enter again after each line. You will need the URL of your Azure DevOps repository to complete this step. Contact the [Statistics Development Team](mailto:statistics.development@education.gov.uk) if you are not sure what this is or do not have one.
+
+
+```r
+git add .
+
+git commit -m "first commit"
+
+git remote add origin YOUR_URL_HERE
+
+git push -f origin --all
+```
+
+* You may be prompted for either your windows or git credentials at this stage. 
+
+  + If prompted for your **windows** credentials, enter the username and password combination you use to log into your DfE device.
+
+  + If prompted for your **git** credentials, visit your online repository, click on the blue "clone" box, and click "generate git credentials". This will generate a username and password for you to enter.
+
+4. Visit your repository online, and check that all the files have uploaded. Other members of your team will now be able to work from your code.  
+
+---
+
+#### Build capability within the team 
+
+---
+
+
+- Ensure all team members have access to your project in the Azure DevOps official-statistics-production area. Contact the [Statistics Development Team](mailto:statistics.development@education.gov.uk) if there are any issues.
+
+- Get team members to clone your repository in to their personal area, so everyone is able to work on code at the same time.
+
+To clone code, they will need to do the following:
+
+1. Run through steps 1 - 2a of [getting a file into a git controlled folder](#get-your-code-into-a-git-controlled-folder)
+
+3. After running those lines, type in the following with your repository URL in the "YOUR_URL_HERE" space. This will clone the online repository to your local area.
+
+
+```r
+git clone YOUR_URL_HERE
+```
+
+- Make use of git and version control in your team projects regularly. Like learning anything new, putting it into practice regularly is the best way to become confident in using it.  
+
+---
+
+#### Make use of basic git commands
+
+---
+
+**Branches**
+
+When you create a git project, it will automatically create a "master" branch for you. This is where code that has been QAd and you are happy with should sit.
+
+- It is good practice to have at least one other branch, we tend to call it "development". This is the branch where you will be doing most of your work. To open a new branch, navigate to "branches" and click on the blue box highlighted below
+
+![](images/new_branch_git.png)<!-- -->
+
+- Having two separate branches means that if anything goes wrong in the "development" branch, everything can be reverted to the last QAd version in "master", without having to lose too much work.
+
+- When working on your project, make sure that you are in the "development" branch. You can check this by navigating to the "Git" tab in RStudio as demonstrated below.
+
+![](images/select_branch.png)<!-- -->
+
+**Commits**
+
+Once you are happy with changes and want them to be in the latest "development" version of the repository for all of your team to see, you can push "commits" up.
+
+- When you make a change to a file, this will pop up in the "Git" window of your R console. Select the files you want to commit by ticking the "staged" box next to them.
+
+![](images/git_stage.png)<!-- -->
+
+- This will bring up a new window. Add a comment describing your additions/changes, and click commit. You will see all the staged files disappear. Then click “Push” to push the committed files up to the online repository for all to use.
+
+![](images/git_push.png)<!-- -->
+
+- When another member of your team makes a commit and you want to pull this into your local area to check and work off the latest version, click on the blue "pull" button.
+
+![](images/pull_git.png)<!-- -->
+
+**Pull requests**
+
+When you have got to a place with the code and your committed changes where you are happy for it to be QAd, you can open a pull request. This means that the "development" branch will be merged into "master", and will become the latest QAd version of the production code that the team falls back on.
+
+* Navigate to "Pull Requests" in the "Repos" tab of Azure DevOps and click the blue "New pull request" button.
+
+* This will take you to a new window. Here, you can add:
+   + Title, tell your team what has changed
+   + Description, tell your reviewer what they should check
+   + Reviewers, add multiple if needed.  
+
+* As a reviewer, to approve a pull request, follow the link in your email and click "approve" in the blue box. When all reviewers are happy for this to be the new master branch, click “complete”.
+
+Please refer to the resources above, or the other links on the [learning resources](l+d.html#git) page to learn more about how to use git in practice. Creating pull requests in GitHub follows a broadly similar process and should be intuitive from the above steps for Azure DevOps.
+
+**Cherry picking**
+
+If you want to cherry pick specific commits for PR, you can do this by cherry picking the commits you want to use, and creatng a new branch that has only those new commits that you want.
+
+To start off you'll need to identify the commits you want. In the terminal, run `git log --oneline` to get a log of commits for your current branch, use `git log --online BRANCHNAME` to specific the branch for the log. This gives a list of commit hashes and messages ([stackoverflow response defining git hashes and commmit ID's](https://stackoverflow.com/questions/43763896/whats-the-difference-between-commit-id-and-sha1-hash-in-git){target="_blank" rel="noopener noreferrer"}). You can press enter to get more commits, or q to quit
+
+Then go to the branch you want the commit to appear on and cherry pick your commits. Often, if this is to hop around something on a development to master pr, you would create a second development branch, cherry pick commits to there, and then PR that to master and delete the branch after merging.
+
+On the branch you want to PR (i.e. your copy of a development branch purely for merging only cherry picked commits) run `git cherry-pick COMMITHASH` to add the specified commit, or `git cherry-pick HASH1^..HASH4` for a specified list of commits (inclusive).
+
+Happy days!
+
+**Tagging release versions** <!-- future best pratice?! -->
+
+It can be useful to tag specific commits or releases at key points in time. For us a common example will be each publication cycle, to tag the version of the code used to process data for a particular release or amendment.
+
+Guidance on how to tag releases using git can be found on the draft version of the [BPI code guidance](https://best-practice-and-impact.github.io/qa-of-code-guidance/version_control.html#releases-tagging){target="_blank" rel="noopener noreferrer"}
+
+**Merging a branch into another one**
+
+For example if you are working on a feature branch, and want to merge the latest changes to the master branch to your feature branch.
+
+Start off by checking out your desired target branch - `git checkout mybranch`. Then merge in the branch you want (e.g. master) - `git merge master`.
